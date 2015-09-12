@@ -33,7 +33,7 @@
 ;; Views
 
 (defn render-character [character]
-  [:p (:strength character)])
+   (map (fn [[key val]] [:p (str key " " val)]) character))
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
