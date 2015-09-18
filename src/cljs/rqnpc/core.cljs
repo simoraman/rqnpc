@@ -26,9 +26,14 @@
   (into
    (hash-map)
    (mapcat (fn [ability] {ability (roll-ability)}) abilities)))
+(defn generate-size [] {:size (+ (roll 6) (roll 6) 6)})
+(defn generate-health [size stamina] {:health (int (/ (+ size stamina) 2))})
 
 (defn generate-npc []
-  (insert-character! (generate-abilities)))
+  (let [abilities (generate-abilities)
+        size (generate-size)
+        health (generate-health (:size size) (:stamina abilities))]
+    (insert-character! (reduce conj [abilities size health]))))
 ;; -------------------------
 ;; Views
 
