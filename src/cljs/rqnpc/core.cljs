@@ -3,7 +3,8 @@
               [reagent.session :as session]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
-              [goog.history.EventType :as EventType])
+              [goog.history.EventType :as EventType]
+              [rqnpc.character :as character])
     (:import goog.History))
 
 (def state (reagent/atom {:characters []}))
@@ -14,31 +15,12 @@
 (defn insert-character! [c]
   (update-state! conj c))
 
-(defn roll [sides]
-  (+ 1 (rand-int sides)))
-
-(def abilities [:strength :stamina :power :dexterity :charisma :intelligence])
-
-(defn roll-ability []
-  (reduce + (repeat 3 (roll 6))))
-
-(defn generate-abilities []
-  (into
-   (hash-map)
-   (mapcat (fn [ability] {ability (roll-ability)}) abilities)))
-(defn generate-size [] {:size (+ (roll 6) (roll 6) 6)})
-(defn generate-health [size stamina] {:health (int (/ (+ size stamina) 2))})
-
-(defn generate-npc []
-  (let [abilities (generate-abilities)
-        size (generate-size)
-        health (generate-health (:size size) (:stamina abilities))]
-    (insert-character! (reduce conj [abilities size health]))))
+(defn generate-npc [] (insert-character! (character/new-npc)))
 ;; -------------------------
 ;; Views
 
 (defn render-character [character]
-   (map (fn [[key val]] [:p (str key " " val)]) character))
+  (map (fn [[key val]] [:p (str (name key) " " val)]) character))
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
