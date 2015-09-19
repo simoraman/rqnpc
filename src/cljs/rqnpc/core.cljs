@@ -7,10 +7,25 @@
               [rqnpc.character :as character])
     (:import goog.History))
 
+(defn saveState [obj]
+  (->> obj
+       (clj->js)
+       (js/JSON.stringify)
+       (.setItem js/localStorage "state")))
+
+(defn loadState []
+  (let [stateJson (.getItem js/localStorage "state")]
+    (->> stateJson
+         (js/JSON.parse)
+         (js->clj)
+         (clojure.walk/keywordize-keys))))
+
 (def state (reagent/atom {:characters []}))
 
 (defn update-state! [f & args]
-  (apply swap! state update-in [:characters] f args))
+  (do
+    (apply swap! state update-in [:characters] f args)
+    (saveState @state)))
 
 (defn insert-character! [c]
   (update-state! conj c))
@@ -58,4 +73,5 @@
   (reagent/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
+  (reset! state (loadState))
   (mount-root))
