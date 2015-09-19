@@ -15,12 +15,36 @@
 (defn insert-character! [c]
   (update-state! conj c))
 
+(defn remove-character! [c]
+  (update-state! (fn [cs]
+                      (vec (remove #(= % c) cs)))
+                    c))
+
 (defn generate-npc [] (insert-character! (character/new-npc)))
+(defn hit-for [amount character]
+  (let [char (assoc character :health (- (:health character) amount))]
+    (do
+      (remove-character! character)
+      (insert-character! char))))
+
 ;; -------------------------
 ;; Views
 
+(def hit-amount (reagent/atom 0))
+(defn atom-input [value]
+  [:input {:type "text"
+           :value @value
+           :on-change #(reset! value (-> % .-target .-value))}])
+
 (defn render-character [character]
-  (map (fn [[key val]] [:p (str (name key) " " val)]) character))
+  [:div {:class "character-sheet"}
+   [:div {:class "abilities"}
+   (map
+    (fn [[key val]]
+      (if (not= :health key) [:p (str (name key) " " val)] "")) character)
+    ]
+   [:div {:class "health"}
+    "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
