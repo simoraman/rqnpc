@@ -30,12 +30,11 @@
 ;; -------------------------
 ;; Views
 
-(def hit-amount (reagent/atom 0))
 (defn atom-input [value]
   [:input {:type "text"
            :value @value
            :on-change #(reset! value (-> % .-target .-value))}])
-
+(def hit-amount (reagent/atom 0))
 (defn render-character [character]
   [:div {:class "character-sheet"}
    [:div {:class "abilities"}
