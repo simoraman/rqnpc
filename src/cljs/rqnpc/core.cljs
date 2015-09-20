@@ -52,6 +52,7 @@
 (def hit-amount (reagent/atom 0))
 (defn render-character [character]
   [:div {:class "character-sheet"}
+   [:div [:button {:on-click #(remove-character! character)} "Delete"]]
    [:div {:class "abilities"}
    (map
     (fn [[key val]]
