@@ -77,7 +77,7 @@
    [:div {:class "health"}
     "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
    [:div [:select.form-control
-          (for [weapon weapons] [:option "lol"])]]])
+          (for [weapon weapons] [:option (:Weapon weapon)])]]])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
