@@ -1,11 +1,26 @@
 (ns rqnpc.core
     (:require [reagent.core :as reagent :refer [atom]]
               [reagent.session :as session]
+              [reagent-forms.core :refer [bind-fields]]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [goog.history.EventType :as EventType]
-              [rqnpc.character :as character])
+              [rqnpc.character :as character]
+              [ajax.core :refer [GET]])
     (:import goog.History))
+
+(def weapons (reagent/atom {}))
+
+(defn deserialize-weapons [response]
+  (->> response
+       (js->clj)
+       (reset! weapons)
+       ))
+
+(defn load-weapons []
+  (GET "/data/weapons.json" {:response-format :json
+                             :keywords? true
+                             :handler deserialize-weapons}))
 
 (defn saveState [obj]
   (->> obj
@@ -33,7 +48,7 @@
 (defn remove-character! [c]
   (update-state! (fn [cs]
                       (vec (remove #(= % c) cs)))
-                    c))
+                 c))
 
 (defn generate-npc [] (insert-character! (character/new-npc)))
 (defn hit-for [amount character]
@@ -50,7 +65,8 @@
            :value @value
            :on-change #(reset! value (-> % .-target .-value))}])
 (def hit-amount (reagent/atom 0))
-(defn render-character [character]
+
+(defn render-character [character weapons]
   [:div {:class "character-sheet"}
    [:div [:button {:on-click #(remove-character! character)} "Delete"]]
    [:div {:class "abilities"}
@@ -59,14 +75,16 @@
       (if (not= :health key) [:p (str (name key) " " val)] "")) character)
     ]
    [:div {:class "health"}
-    "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]])
+    "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
+   [:div [:select.form-control
+          (for [weapon weapons] [:option "lol"])]]])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
    [:div
     [:button {:on-click #(generate-npc)} "Generate"]]
-   (for [c (:characters @state)]
-     (render-character c))])
+   (doall (for [c (:characters @state)]
+            (render-character c @weapons)))])
 
 ;; -------------------------
 ;; Initialize app
@@ -74,5 +92,6 @@
   (reagent/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
+  (load-weapons)
   (reset! state (loadState))
   (mount-root))
