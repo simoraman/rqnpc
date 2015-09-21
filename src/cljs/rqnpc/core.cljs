@@ -57,6 +57,12 @@
       (remove-character! character)
       (insert-character! char))))
 
+(defn set-weapon [character weapon]
+  (let [char (assoc character :weapon weapon)]
+    (do
+      (remove-character! character)
+      (insert-character! char))))
+
 ;; -------------------------
 ;; Views
 
@@ -76,8 +82,9 @@
     ]
    [:div {:class "health"}
     "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
-   [:div [:select.form-control
-          (for [weapon weapons] [:option (:Weapon weapon)])]]])
+   [:div [:select.form-control {:value (:weapon character) :on-change #(set-weapon character (-> % .-target .-value))}
+          (for [weapon weapons]
+            [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
