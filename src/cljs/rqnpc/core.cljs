@@ -81,7 +81,9 @@
       (if (not= :health key) [:p (str (name key) " " val)] "")) character)
     ]
    [:div {:class "health"}
-    "Health: " (:health character) [atom-input hit-amount] [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
+    "Health: " (:health character)
+    [atom-input hit-amount]
+    [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
    [:div [:select.form-control {:value (:weapon character) :on-change #(set-weapon character (-> % .-target .-value))}
           (for [weapon weapons]
             [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]])
