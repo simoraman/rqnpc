@@ -57,8 +57,9 @@
       (remove-character! character)
       (insert-character! char))))
 
-(defn set-weapon [character weapon]
-  (let [char (assoc character :weapon weapon)]
+(defn set-weapon [character weapon-name weapons]
+  (let [weapon (first (filter #(= weapon-name (:Weapon %)) weapons))
+        char (assoc character :weapon weapon)]
     (do
       (remove-character! character)
       (insert-character! char))))
