@@ -89,10 +89,14 @@
                            :on-change #(set-weapon character (-> % .-target .-value) weapons)}
           (for [weapon weapons]
             [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
-   [:div [:h3 "Strike Rank"]
-    [:span (str "Size: " (:size-strike-rank character))]
-    [:span (str "Dexterity: " (:dexterity-size-rank character))]
-    [:span (str "Weapon: " (-> character :weapon :StrikeRank))]]])
+   (let [size-rank (:size-strike-rank character)
+         dex-rank (:dexterity-size-rank character)
+         weapon-rank (-> character :weapon :StrikeRank)]
+     [:div [:h3 "Strike Rank"]
+      [:span (str "Size: " size-rank)]
+      [:span (str "Dexterity: " dex-rank)]
+      [:span (str "Weapon: " weapon-rank)]
+      [:span (str "Total: " (+ size-rank dex-rank weapon-rank))]])])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
