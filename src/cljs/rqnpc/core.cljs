@@ -81,13 +81,22 @@
     (fn [[key val]]
       (if (not= :health key) [:p (str (name key) " " val)] "")) character)
     ]
+      (if (not= :health key) [:p (str (name key) " " val)] "")) character)]
    [:div {:class "health"}
     "Health: " (:health character)
     [atom-input hit-amount]
     [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
    [:div [:select.form-control {:value (:weapon character) :on-change #(set-weapon character (-> % .-target .-value))}
+   [:div
+    [:select.form-control {:value (:weapon character)
+                           :on-change #(set-weapon character (-> % .-target .-value) weapons)}
           (for [weapon weapons]
             [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]])
+            [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
+   [:div [:h3 "Strike Rank"]
+    [:span (str "Size: " (:size-strike-rank character))]
+    [:span (str "Dexterity: " (:dexterity-size-rank character))]
+    [:span (str "Weapon: " (-> character :weapon :StrikeRank))]]])
 
 (defn home-page []
   [:div [:h2 "Runequest NPC generator"]
