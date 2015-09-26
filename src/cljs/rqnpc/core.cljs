@@ -79,7 +79,7 @@
    [:div {:class "abilities"}
    (map
     (fn [[key val]]
-      (if (not= :health key) [:p (str (name key) " " val)] "")) character)]
+      [:p (str (name key) " " val)]) (:abilities character))]
    [:div {:class "health"}
     "Health: " (:health character)
     [atom-input hit-amount]
