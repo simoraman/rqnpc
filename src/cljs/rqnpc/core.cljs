@@ -74,12 +74,13 @@
 (def hit-amount (reagent/atom 0))
 
 (defn render-character [character weapons]
+  ^{:key (hash character)}
   [:div {:class "character-sheet"}
    [:div [:button {:on-click #(remove-character! character)} "Delete"]]
    [:div {:class "abilities"}
    (map
     (fn [[key val]]
-      [:p (str (name key) " " val)]) (:abilities character))]
+      ^{:key key} [:p (str (name key) " " val)]) (:abilities character))]
    [:div {:class "health"}
     "Health: " (:health character)
     [atom-input hit-amount]
@@ -89,7 +90,7 @@
                            :on-change #(set-weapon character (-> % .-target .-value) weapons)}
      [:option {:value ""} "None"]
      (for [weapon weapons]
-       [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
+       ^{:key (:Weapon weapon)} [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
    (let [size-rank (:size-strike-rank character)
          dex-rank (:dexterity-size-rank character)
          weapon-rank (-> character :weapon :StrikeRank)]
