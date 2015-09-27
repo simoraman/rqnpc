@@ -85,10 +85,11 @@
     [atom-input hit-amount]
     [:button {:on-click #(hit-for @hit-amount character)} "Hit!"]]
    [:div
-    [:select.form-control {:value (:weapon character)
+    [:select.form-control {:value (-> character :weapon :Weapon)
                            :on-change #(set-weapon character (-> % .-target .-value) weapons)}
-          (for [weapon weapons]
-            [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
+     [:option {:value ""} "None"]
+     (for [weapon weapons]
+       [:option {:value (:Weapon weapon)} (:Weapon weapon)])]]
    (let [size-rank (:size-strike-rank character)
          dex-rank (:dexterity-size-rank character)
          weapon-rank (-> character :weapon :StrikeRank)]
